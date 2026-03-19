@@ -102,6 +102,16 @@ public class GameInfoPanel extends JPanel {
         undoButton.setEnabled(!game.getMoveHistory().isEmpty());
     }
 
+    /**
+     * Shows a "Thinking..." overlay and disables controls during CPU turn.
+     */
+    public void setCpuThinking(boolean thinking) {
+        if (thinking) {
+            statusLabel.setText(statusLabel.getText() + "  (Thinking...)");
+        }
+        undoButton.setEnabled(!thinking && newGameButton.isEnabled());
+    }
+
     private String turnName(Color color) {
         return color == Color.WHITE ? "White" : "Black";
     }

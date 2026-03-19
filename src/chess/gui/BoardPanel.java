@@ -55,6 +55,7 @@ public class BoardPanel extends JPanel {
     private Position selectedSquare;
     private List<Position> legalMoves = new ArrayList<>();
     private boolean boardFlipped = false;
+    private boolean inputEnabled = true;
 
     public BoardPanel(Game game, GameEventListener listener) {
         this.game = game;
@@ -70,7 +71,13 @@ public class BoardPanel extends JPanel {
         });
     }
 
+    public void setInputEnabled(boolean enabled) {
+        this.inputEnabled = enabled;
+    }
+
     private void handleClick(int x, int y) {
+        if (!inputEnabled) return;
+
         Position clicked = toPosition(x, y);
         if (clicked == null || !clicked.isValid()) return;
 

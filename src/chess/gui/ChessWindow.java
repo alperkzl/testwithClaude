@@ -28,6 +28,7 @@ public class ChessWindow extends JFrame
     private MoveHistoryPanel moveHistoryPanel;
     private GameInfoPanel gameInfoPanel;
 
+    private static final long CPU_MIN_THINK_MS = 3000;
     private boolean cpuThinking = false;
 
     public ChessWindow(GameMode mode, Color humanColor) {
@@ -124,17 +125,26 @@ public class ChessWindow extends JFrame
         boardPanel.setInputEnabled(false);
         gameInfoPanel.setCpuThinking(true);
 
+        final long startTime = System.currentTimeMillis();
+
         SwingWorker<Move, Void> worker = new SwingWorker<Move, Void>() {
             @Override
             protected Move doInBackground() {
-                return cpu.chooseMove(game);
+                Move move = cpu.chooseMove(game);
+                // Ensure minimum think time so humans can follow
+                long elapsed = System.currentTimeMillis() - startTime;
+                long remaining = CPU_MIN_THINK_MS - elapsed;
+                if (remaining > 0) {
+                    try { Thread.sleep(remaining); } catch (InterruptedException ignored) {}
+                }
+                return move;
             }
 
             @Override
             protected void done() {
                 cpuThinking = false;
                 try {
-                    get(); // retrieve result (move already applied by CpuPlayer)
+                    get();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -145,14 +155,7 @@ public class ChessWindow extends JFrame
                 if (game.isGameOver()) {
                     SwingUtilities.invokeLater(() -> showGameOverDialog());
                 } else {
-                    // In CPU vs CPU, schedule the next move with a small delay for visibility
-                    if (gameMode == GameMode.CPU_VS_CPU) {
-                        Timer timer = new Timer(400, evt -> scheduleCpuMoveIfNeeded());
-                        timer.setRepeats(false);
-                        timer.start();
-                    } else {
-                        scheduleCpuMoveIfNeeded();
-                    }
+                    scheduleCpuMoveIfNeeded();
                 }
             }
         };

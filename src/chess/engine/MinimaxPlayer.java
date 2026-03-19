@@ -31,7 +31,7 @@ public class MinimaxPlayer implements CpuPlayer {
         List<MoveCandidate> candidates = generateAllMoves(game);
         if (candidates.isEmpty()) return null;
 
-        Move bestMove = null;
+        MoveCandidate bestCandidate = null;
         int bestScore = isMaximizing ? Integer.MIN_VALUE : Integer.MAX_VALUE;
         int alpha = Integer.MIN_VALUE;
         int beta = Integer.MAX_VALUE;
@@ -46,19 +46,23 @@ public class MinimaxPlayer implements CpuPlayer {
             if (isMaximizing) {
                 if (score > bestScore) {
                     bestScore = score;
-                    bestMove = move;
+                    bestCandidate = candidate;
                 }
                 alpha = Math.max(alpha, score);
             } else {
                 if (score < bestScore) {
                     bestScore = score;
-                    bestMove = move;
+                    bestCandidate = candidate;
                 }
                 beta = Math.min(beta, score);
             }
         }
 
-        return bestMove;
+        // Actually apply the best move to the game
+        if (bestCandidate != null) {
+            return executeMove(game, bestCandidate);
+        }
+        return null;
     }
 
     private int minimax(Game game, int depth, int alpha, int beta, boolean isMaximizing) {

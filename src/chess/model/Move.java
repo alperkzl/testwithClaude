@@ -14,6 +14,7 @@ public class Move {
     private final boolean couldCastleKingsideBefore;
     private final boolean couldCastleQueensideBefore;
     private final Position enPassantTargetBefore;
+    private int halfMoveClockBefore;
 
     public Move(Position from, Position to, Piece pieceMoved, Piece pieceCaptured,
                 MoveType moveType, PieceType promotionPiece,
@@ -76,6 +77,8 @@ public class Move {
     public boolean couldCastleKingsideBefore() { return couldCastleKingsideBefore; }
     public boolean couldCastleQueensideBefore() { return couldCastleQueensideBefore; }
     public Position getEnPassantTargetBefore() { return enPassantTargetBefore; }
+    public int getHalfMoveClockBefore() { return halfMoveClockBefore; }
+    public void setHalfMoveClockBefore(int clock) { this.halfMoveClockBefore = clock; }
 
     @Override
     public String toString() {

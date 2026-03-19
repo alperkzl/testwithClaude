@@ -65,7 +65,8 @@ public class Game {
         // Build the move object
         Move move = buildMove(piece, from, to, promotionChoice);
 
-        // Execute the move on the board
+        // Save clock state for undo, then execute
+        move.setHalfMoveClockBefore(halfMoveClock);
         executeMove(move);
 
         // Update game state
@@ -93,6 +94,7 @@ public class Game {
 
         Move lastMove = moveHistory.remove(moveHistory.size() - 1);
         reverseMove(lastMove);
+        halfMoveClock = lastMove.getHalfMoveClockBefore();
         currentTurn = currentTurn.opposite();
         updateGameState();
 
